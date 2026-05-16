@@ -3,6 +3,8 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { sendEmail } from "../lib/mail.js";
 import { welcomeEmailTemplate } from "../templates/welcomeEmailTemplate.js";
+import "../lib/env.js";
+import cloudinary from "../lib/cloudinary.js";
 
 // 1.....this is the controller of sign up 
 export const signup = async (req, res) => {
@@ -84,7 +86,22 @@ export const login = async (req, res) => {
      }
 };
 
-export const logout = (__,res) => {
+export const logout = (__, res) => {
      res.cookie("jwt", "", { maxAge: 0 })
      res.status(200).json({ message: "Logged Out successfully" });
 }
+
+export const updateProfile = async(req, res) => {
+     try {
+          const { profilePic } = req.body;
+          if (!profilePic) res.status(400).json({ message: "profile pic is required" })
+
+          const userId = req.user._id;
+          const uploadResponse = await cloudinary.upload(profilePic)
+         const updatedUser= await User.findByIdAndUpdate(userId,{profilePic: uploadResponse.secure_url},{new:true});
+           res.status(200).json(updatedUser)
+     } catch (error) {
+          console.error("Error in the update profile", error);
+          res.status(500).json({ message: "Internal Server error" });
+     }
+} 
