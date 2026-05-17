@@ -4,7 +4,7 @@ import { protectRoute } from "../middleware/auth.middleware.js";
 import { arcjetProtection } from "../middleware/arcjet.middleman.js";
 const router=express.Router();
 
-router.use(arcjetProtection);
+// router.use(arcjetProtection);
 // LOGIN LOGOUT AND SIGNUP 
 router.post("/signup",signup);
 router.post("/login",login);
