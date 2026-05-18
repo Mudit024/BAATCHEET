@@ -12,21 +12,23 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 
-const app = express();
+const app=express();
 
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json()); // act as a middleman used ot get the data formthe user  req.body();
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));// act as a middleman used ot get the data formthe user  req.body();
 app.use(cors({
-      origin: process.env.CLIENT_URL,
-      credentials: true,
+  origin: process.env.CLIENT_URL,
+  credentials: true,
 }));
+
 app.use(cookieParser()); // to check for the cookie 
 
 // routes 
 
-app.use("/api/auth/", authRoutes);
-app.use("/api/messages/", messageRoute);
+app.use("/api/auth/",authRoutes);
+app.use("/api/messages/",messageRoute);
 
 // server and mongodb 
 
