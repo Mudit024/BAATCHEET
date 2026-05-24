@@ -4,13 +4,14 @@ dotenv.config();
 
 
 import express from "express"
-
+import path from "path";
 import authRoutes from "./routes/auth.route.js";
 import messageRoute from "./routes/message.route.js";
 import { connectDb } from "./lib/db.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
+const __dirname = path.resolve();
 
 const app=express();
 
@@ -29,6 +30,18 @@ app.use(cookieParser()); // to check for the cookie
 
 app.use("/api/auth/",authRoutes);
 app.use("/api/messages/",messageRoute);
+
+
+// make ready for deployment
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  app.get("*", (_, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
+
+
 
 // server and mongodb 
 
